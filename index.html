@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PLAN DE ESTUDIOS LCC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f6fbff;
+      --card:#ffffff;
+      --muted:#7b8794;
+      --accent:#7aa2ff;
+      --soft:#e9f2ff;
+      --ok:#7bd389;
+      --danger:#ffb3a7;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{ margin:0; background:linear-gradient(180deg,var(--bg),#f2f9ff); color:#1f2933; padding:28px; }
+    header{ display:flex; gap:16px; align-items:center; margin-bottom:18px; }
+    .brand{ display:flex; flex-direction:column; }
+    h1{ margin:0; font-size:20px; letter-spacing:0.2px; }
+    .sub{color:var(--muted); font-size:13px}
+    .grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px; align-items:start; }
+    .column{ background:var(--card); border-radius:10px; padding:12px; box-shadow: 0 6px 18px rgba(34,60,80,0.06); }
+    .col-title{ font-weight:600; margin:0 0 8px 0; font-size:14px; color:#123; }
+    .semester{ font-size:12px; color:var(--muted); margin-bottom:8px; }
+    .materia{ display:flex; justify-content:space-between; align-items:center; gap:8px; padding:8px; border-radius:8px; margin-bottom:8px; cursor:pointer; transition:all .18s ease; border:1px solid rgba(18,18,18,0.03); background:linear-gradient(90deg, #fff, #fbfdff); font-size:13px; }
+    .materia:hover{ transform:translateY(-2px); box-shadow:0 6px 14px rgba(30,60,110,0.04) }
+    .materia.aprobada{ background:linear-gradient(90deg,var(--soft), #fff); border-left:4px solid var(--ok); opacity:1 }
+    .materia.bloqueada{ opacity:.6; cursor:not-allowed; }
+    .code{ font-size:11px; color:var(--muted); margin-right:8px; min-width:46px; text-align:left }
+    .status{ font-size:12px; padding:6px 8px; border-radius:999px; background:rgba(0,0,0,0.03); }
+    .hint{ font-size:12px; color:var(--muted); }
+    .tooltip{ position:relative; }
+    .tooltip .tt{ position:absolute; bottom:calc(100% + 8px); left:0; background:#1f2933; color:white; padding:8px 10px; border-radius:8px; white-space:nowrap; font-size:12px; transform-origin: bottom left; transform:scale(.98); opacity:0; pointer-events:none; transition:all .12s ease; box-shadow:0 6px 18px rgba(18,24,40,.2); z-index:50; }
+    .tooltip:hover .tt{ opacity:1; transform:scale(1); pointer-events:auto }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>PLAN DE ESTUDIOS LCC</h1>
+      <div class="sub">Malla interactiva — haz clic para marcar materias aprobadas</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid" id="mallaGrid"></div>
+    <div class="hint">Las materias bloqueadas muestran qué requisitos faltan al pasar el mouse. Progreso guardado en tu navegador.</div>
+  </main>
+
+  <script>
+    const mallaData = [
+      { title: "Periodo de Ingreso (ATI)", subtitle:"", materias:[
+        { id:"alg_comp", name:"Algoritmos y Comprensión de Problemas", req:[] },
+        { id:"mat_ing", name:"Matemática", req:[] }
+      ]},
+      { title: "1° Año - 1° Cuatrimestre", subtitle:"PRIMER CUATRIMESTRE", materias:[
+        { id:"prog1", name:"Programación I", req:[] },
+        { id:"alg_geo", name:"Álgebra y Geometría", req:[] },
+        { id:"fund_comp", name:"Fundamentos de Computación", req:[] }
+      ]},
+      { title: "1° Año - 2° Cuatrimestre", subtitle:"SEGUNDO CUATRIMESTRE", materias:[
+        { id:"prog2", name:"Programación II", req:["prog1"] },
+        { id:"an_mat1", name:"Análisis Matemático I", req:["alg_geo"] },
+        { id:"orga1", name:"Organización de Computadoras", req:["fund_comp"] }
+      ]},
+      { title: "2° Año - 1° Cuatrimestre", subtitle:"PRIMER CUATRIMESTRE", materias:[
+        { id:"estruc", name:"Estructuras de Datos", req:["prog2"] },
+        { id:"sisop", name:"Sistemas Operativos", req:["orga1"] },
+        { id:"teoria", name:"Teoría de Autómatas y Lenguajes", req:["fund_comp"] }
+      ]},
+      { title: "2° Año - 2° Cuatrimestre", subtitle:"SEGUNDO CUATRIMESTRE", materias:[
+        { id:"bases", name:"Bases de Datos", req:["estruc"] },
+        { id:"redes", name:"Redes de Computadoras", req:["orga1","sisop"] },
+        { id:"an_mat2", name:"Análisis Matemático II", req:["an_mat1"] }
+      ]},
+      { title: "3° Año - 1° Cuatrimestre", subtitle:"PRIMER CUATRIMESTRE", materias:[
+        { id:"compil", name:"Compiladores", req:["teoria","prog2"] },
+        { id:"ing_soft", name:"Ingeniería de Software", req:["estruc","bases"] },
+        { id:"optativa", name:"Optativa Profesional", req:[] }
+      ]}
+    ];
+
+    const LS_KEY_PROGRESS = 'malla_lcc_progress';
+    let progreso = JSON.parse(localStorage.getItem(LS_KEY_PROGRESS) || '{}');
+
+    function isAprobada(id){ return !!progreso[id]; }
+    function estaDesbloqueada(materia){
+      return materia.req.length === 0 || materia.req.every(r => isAprobada(r));
+    }
+
+    const grid = document.getElementById('mallaGrid');
+    function render(){
+      grid.innerHTML = '';
+      mallaData.forEach(col=>{
+        const colEl = document.createElement('div');
+        colEl.className='column';
+        colEl.innerHTML = `<div class="col-title">${col.title}</div><div class="semester">${col.subtitle}</div>`;
+        col.materias.forEach(mat=>{
+          const unlocked = estaDesbloqueada(mat);
+          const m = document.createElement('div');
+          m.className = 'materia' + (isAprobada(mat.id) ? ' aprobada' : unlocked ? '' : ' bloqueada');
+
+          const left = document.createElement('div');
+          left.style.display='flex';
+          left.style.alignItems='center';
+          const code = document.createElement('div');
+          code.className='code';
+          code.textContent = mat.id;
+          const name = document.createElement('div');
+          name.textContent = mat.name;
+          left.appendChild(code);
+          left.appendChild(name);
+
+          const right = document.createElement('div');
+          if(!unlocked){
+            const missing = mat.req.filter(r => !isAprobada(r));
+            const ttwrap = document.createElement('div');
+            ttwrap.className='tooltip';
+            const badge = document.createElement('div');
+            badge.className='status';
+            badge.textContent='Bloqueada';
+            const tt = document.createElement('div');
+            tt.className='tt';
+            tt.textContent = 'Faltan: ' + missing.join(', ');
+            ttwrap.appendChild(badge);
+            ttwrap.appendChild(tt);
+            right.appendChild(ttwrap);
+          } else {
+            const st = document.createElement('div');
+            st.className='status';
+            st.textContent = isAprobada(mat.id) ? 'Aprobada' : 'Disponible';
+            right.appendChild(st);
+          }
+
+          m.appendChild(left);
+          m.appendChild(right);
+
+          m.addEventListener('click', ()=>{
+            if(!unlocked) return;
+            if(isAprobada(mat.id)) delete progreso[mat.id];
+            else progreso[mat.id] = true;
+            localStorage.setItem(LS_KEY_PROGRESS, JSON.stringify(progreso));
+            render();
+          });
+
+          colEl.appendChild(m);
+        });
+        grid.appendChild(colEl);
+      });
+    }
+    render();
+  </script>
+</body>
+</html>
