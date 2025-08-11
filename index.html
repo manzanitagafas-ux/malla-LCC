@@ -6,26 +6,35 @@
   <title>Malla curricular interactiva - PLAN DE ESTUDIOS LCC</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
-    :root{ --bg:#f6fbff; --card:#ffffff; --muted:#6b7280; --accent:#7aa2ff; --soft:#e9f2ff; --ok:#7bd389; --danger:#ffb3a7; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    :root {
+      --bg: #fff0f6;
+      --card: #ffe6f0;
+      --muted: #b36686;
+      --accent: #ff66b2;
+      --soft: #ffd6e8;
+      --ok: #ff99cc;
+      --danger: #ff3366;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
     *{box-sizing:border-box}
-    body{ margin:0; background:linear-gradient(180deg,var(--bg),#f2f9ff); color:#111827; padding:24px; }
+    body{ margin:0; background:linear-gradient(180deg,var(--bg),#fce9f4); color:#111827; padding:24px; }
     header{ display:flex; gap:12px; align-items:center; margin-bottom:18px; }
     .brand{ display:flex; flex-direction:column; }
-    h1{ margin:0; font-size:20px; letter-spacing:0.2px; }
+    h1{ margin:0; font-size:20px; letter-spacing:0.2px; color:#800040;}
     .sub{color:var(--muted); font-size:13px}
     .grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:14px; align-items:start; }
-    .column{ background:var(--card); border-radius:10px; padding:12px; box-shadow: 0 6px 18px rgba(34,60,80,0.06); }
-    .col-title{ font-weight:600; margin:0 0 8px 0; font-size:14px; color:#0f172a; }
+    .column{ background:var(--card); border-radius:10px; padding:12px; box-shadow: 0 6px 18px rgba(255, 51, 102, 0.15); }
+    .col-title{ font-weight:600; margin:0 0 8px 0; font-size:14px; color:#660033; }
     .semester{ font-size:12px; color:var(--muted); margin-bottom:8px; }
-    .materia{ display:flex; justify-content:space-between; align-items:center; gap:8px; padding:8px; border-radius:8px; margin-bottom:8px; cursor:pointer; transition:all .16s ease; border:1px solid rgba(18,18,18,0.04); background:linear-gradient(90deg,#fff,#fbfdff); font-size:13px; }
-    .materia:hover{ transform:translateY(-2px); box-shadow:0 6px 14px rgba(30,60,110,0.04) }
+    .materia{ display:flex; justify-content:space-between; align-items:center; gap:8px; padding:8px; border-radius:8px; margin-bottom:8px; cursor:pointer; transition:all .16s ease; border:1px solid rgba(255, 51, 102, 0.2); background:linear-gradient(90deg,#fff0f6,#ffe6f0); font-size:13px; color:#660033; }
+    .materia:hover{ transform:translateY(-2px); box-shadow:0 6px 14px rgba(255, 51, 102, 0.3); }
     .materia.aprobada{ background:linear-gradient(90deg,var(--soft), #fff); border-left:4px solid var(--ok); }
     .materia.bloqueada{ opacity:.6; cursor:not-allowed; }
-    .code{ font-size:11px; color:var(--muted); margin-right:8px; min-width:46px; text-align:left }
-    .status{ font-size:12px; padding:6px 8px; border-radius:999px; background:rgba(0,0,0,0.04); }
+    /* Eliminamos el estilo .code porque no lo usaremos */
+    .status{ font-size:12px; padding:6px 8px; border-radius:999px; background:rgba(255,51,102,0.15); color:#800040; }
     .hint{ font-size:12px; color:var(--muted); }
     .tooltip{ position:relative; }
-    .tooltip .tt{ position:absolute; bottom:calc(100% + 8px); left:0; background:#0f172a; color:white; padding:8px 10px; border-radius:8px; white-space:nowrap; font-size:12px; transform-origin: bottom left; transform:scale(.98); opacity:0; pointer-events:none; transition:all .12s ease; box-shadow:0 6px 18px rgba(18,24,40,.2); z-index:50; }
+    .tooltip .tt{ position:absolute; bottom:calc(100% + 8px); left:0; background:#800040; color:white; padding:8px 10px; border-radius:8px; white-space:nowrap; font-size:12px; transform-origin: bottom left; transform:scale(.98); opacity:0; pointer-events:none; transition:all .12s ease; box-shadow:0 6px 18px rgba(255,51,102,.7); z-index:50; }
     .tooltip:hover .tt{ opacity:1; transform:scale(1); pointer-events:auto }
     footer{ margin-top:14px; display:flex; justify-content:space-between; align-items:center; gap:12px; color:var(--muted); }
     @media (max-width:560px){ .grid{ grid-template-columns: 1fr } }
@@ -48,96 +57,76 @@
   </main>
 
   <script>
-    /* Malla basada en el PDF provisto (Plan 2012). Se agregó columna inicial "Periodo de Ingreso (ATI)".
-       Referencia: el PDF que subiste. */
-
     const mallaData = [
-      // ATI (periodo de ingreso) con las dos materias de ingreso (según lo pediste)
       { title: "Periodo de Ingreso (ATI)", subtitle: "", materias:[
         { id: "ati_alg_comp", name: "Algoritmos y Comprensión de Problemas", req: [] },
         { id: "ati_matematica", name: "Matemática (Ingreso)", req: [] }
       ]},
-
-      // 1er año - 1er cuatrimestre (según PDF)
       { title: "1° Año - 1° Cuatrimestre", subtitle: "PRIMER CUATRIMESTRE", materias:[
         { id: "resol_prob", name: "Resolución de Problemas y Algoritmos", req: [] },
         { id: "elem_alg_geo", name: "Elementos de Álgebra y de Geometría", req: [] }
       ]},
-
       { title: "1° Año - 2° Cuatrimestre", subtitle: "SEGUNDO CUATRIMESTRE", materias:[
         { id: "anmat1", name: "Análisis Matemático I", req: [] },
         { id: "intro_poo", name: "Introducción a la Programación Orientada a Objetos", req: ["resol_prob","elem_alg_geo"] },
         { id: "leng_form", name: "Lenguajes Formales y Autómatas", req: ["resol_prob","elem_alg_geo"] }
       ]},
-
       { title: "2° Año - 1° Cuatrimestre", subtitle: "PRIMER CUATRIMESTRE", materias:[
         { id: "estructuras", name: "Estructuras de Datos", req: ["anmat1","intro_poo","resol_prob"] },
         { id: "teoria_comp", name: "Teoría de la Computabilidad", req: ["intro_poo","leng_form","elem_alg_geo"] }
       ]},
-
       { title: "2° Año - 2° Cuatrimestre", subtitle: "SEGUNDO CUATRIMESTRE", materias:[
         { id: "anmat2", name: "Análisis Matemático II", req: ["anmat1"] },
         { id: "tecnologia_prog", name: "Tecnología de Programación", req: ["estructuras","intro_poo"] },
         { id: "orga_comp", name: "Organización de Computadoras", req: ["leng_form","estructuras","intro_poo"] },
         { id: "ingles", name: "Examen de Suficiencia de Idioma (INGLÉS)", req: [] }
       ]},
-
-      // Nota del plan: el examen de inglés debe estar aprobado antes de cursar 3° año.
       { title: "3° Año - 1° Cuatrimestre", subtitle: "PRIMER CUATRIMESTRE", materias:[
         { id: "logica", name: "Lógica para Ciencias de la Computación", req: ["tecnologia_prog","teoria_comp","ingles"] },
         { id: "anal_dis", name: "Análisis y Diseño de Sistemas", req: ["tecnologia_prog","estructuras","ingles"] },
         { id: "arquitectura", name: "Arquitectura de Computadoras", req: ["orga_comp","leng_form","ingles"] }
       ]},
-
       { title: "3° Año - 2° Cuatrimestre", subtitle: "SEGUNDO CUATRIMESTRE", materias:[
         { id: "met_comp", name: "Métodos de Computación Científica", req: ["anmat2","leng_form","estructuras","ingles"] },
         { id: "modelos_est", name: "Modelos Estadísticos para Ciencias de la Computación", req: ["leng_form","anmat1","resol_prob","ingles"] },
         { id: "sisop_dist", name: "Sistemas Operativos y Distribuidos", req: ["arquitectura","orga_comp","ingles"] },
         { id: "bases_datos", name: "Bases de Datos", req: ["logica","anal_dis","ingles"] }
       ]},
-
       { title: "4° Año - 1° Cuatrimestre", subtitle: "PRIMER CUATRIMESTRE", materias:[
         { id: "leng_prog", name: "Lenguajes de Programación", req: ["sisop_dist","bases_datos","logica"] },
         { id: "diseno_software", name: "Diseño y Desarrollo de Software", req: ["bases_datos","anal_dis"] },
         { id: "redes", name: "Redes de Computadoras", req: ["sisop_dist"] }
       ]},
-
       { title: "4° Año - 2° Cuatrimestre", subtitle: "SEGUNDO CUATRIMESTRE", materias:[
         { id: "inteligencia", name: "Inteligencia Artificial", req: ["bases_datos","logica"] },
         { id: "adm_proy", name: "Administración de Proyectos de Software", req: ["diseno_software"] },
         { id: "compiladores", name: "Compiladores e Intérpretes", req: ["leng_prog"] }
       ]},
-
       { title: "5° Año - 1° Cuatrimestre", subtitle: "PRIMER CUATRIMESTRE", materias:[
         { id: "algoritmos_comp", name: "Algoritmos y Complejidad", req: ["logica","met_comp","tecnologia_prog"] },
         { id: "ing_web", name: "Ingeniería de Aplicaciones de Web", req: ["diseno_software","redes","bases_datos"] },
         { id: "optativa", name: "Optativa Profesional", req: [] }
       ]},
-
       { title: "5° Año - 2° Cuatrimestre", subtitle: "SEGUNDO CUATRIMESTRE", materias:[
-        { id: "tesis", name: "Tesis de Licenciatura", req: ["leng_prog"] }
+        { id: "tesis", name: "Tesis de Licenciatura", req: ["leng_prog"] },
+        { id: "optativa_2", name: "Materia Optativa", req: [] }  // Agregado optativa aquí
       ]}
     ];
 
-    // localStorage
     const LS_KEY_PROGRESS = 'malla_lcc_progress_v2';
     let progreso = JSON.parse(localStorage.getItem(LS_KEY_PROGRESS) || '{}');
 
-    // helper: map id -> name
     const idToName = {};
     mallaData.forEach(col => col.materias.forEach(m => idToName[m.id] = m.name));
 
     function isAprobada(id){ return !!progreso[id]; }
 
-    // función que verifica si una materia está desbloqueada
     function estaDesbloqueada(materia){
-      // must have English approved before 3rd year: implemented via including 'ingles' as prereq in 3° año materias
       if(!materia.req || materia.req.length === 0) return true;
       const faltantes = materia.req.filter(r => !isAprobada(r));
       if(faltantes.length > 0) return false;
 
       if(materia.id === 'tesis'){
-        // requiere Lenguajes de Programación y además "Tercer año aprobado"
         const tercerAnoIds = [];
         mallaData.forEach(col => { if(col.title && col.title.startsWith('3° Año')) col.materias.forEach(x => tercerAnoIds.push(x.id)); });
         const todos3Aprobados = tercerAnoIds.every(id => isAprobada(id));
@@ -147,7 +136,6 @@
       return true;
     }
 
-    // render
     const grid = document.getElementById('mallaGrid');
     function render(){
       grid.innerHTML = '';
@@ -162,10 +150,14 @@
           const mEl = document.createElement('div');
           mEl.className = 'materia' + (isAprobada(mat.id) ? ' aprobada' : (unlocked ? '' : ' bloqueada'));
 
-          const left = document.createElement('div'); left.style.display='flex'; left.style.alignItems='center';
-          const code = document.createElement('div'); code.className='code'; code.textContent = mat.id;
-          const name = document.createElement('div'); name.textContent = mat.name;
-          left.appendChild(code); left.appendChild(name);
+          const left = document.createElement('div');
+          left.style.display='flex'; 
+          left.style.alignItems='center';
+
+          // Eliminado código que muestra mat.id para no mostrar código al lado
+          const name = document.createElement('div');
+          name.textContent = mat.name;
+          left.appendChild(name);
 
           const right = document.createElement('div');
           if(!unlocked){
@@ -188,7 +180,8 @@
             right.appendChild(st);
           }
 
-          mEl.appendChild(left); mEl.appendChild(right);
+          mEl.appendChild(left);
+          mEl.appendChild(right);
 
           mEl.addEventListener('click', () => {
             if(!estaDesbloqueada(mat)) return;
@@ -204,7 +197,6 @@
       });
     }
 
-    // inicializar
     render();
   </script>
 </body>
