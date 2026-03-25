@@ -63,11 +63,11 @@
         { id: "ati_matematica", name: "Matemática (Ingreso)", req: [] }
       ]},
       { title: "1° Año - 1° Cuatrimestre", subtitle: "PRIMER CUATRIMESTRE", materias:[
-        { id: "resol_prob", name: "Resolución de Problemas y Algoritmos", req: [] },
-        { id: "elem_alg_geo", name: "Elementos de Álgebra y de Geometría", req: [] }
+        { id: "resol_prob", name: "Resolución de Problemas y Algoritmos", req: ["ati_alg_comp"] },
+        { id: "elem_alg_geo", name: "Elementos de Álgebra y de Geometría", req: ["ati_matematica"] },
+        { id: "anmat1", name: "Análisis Matemático I", req: ["ati_matematica"] }
       ]},
       { title: "1° Año - 2° Cuatrimestre", subtitle: "SEGUNDO CUATRIMESTRE", materias:[
-        { id: "anmat1", name: "Análisis Matemático I", req: [] },
         { id: "intro_poo", name: "Introducción a la Programación Orientada a Objetos", req: ["resol_prob","elem_alg_geo"] },
         { id: "leng_form", name: "Lenguajes Formales y Autómatas", req: ["resol_prob","elem_alg_geo"] }
       ]},
